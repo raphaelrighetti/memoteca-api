@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +22,7 @@ import io.github.raphaelrighetti.memotecaapi.entities.pensamento.dto.PensamentoA
 import io.github.raphaelrighetti.memotecaapi.entities.pensamento.dto.PensamentoCadastroDTO;
 import io.github.raphaelrighetti.memotecaapi.entities.pensamento.dto.PensamentoDTO;
 import io.github.raphaelrighetti.memotecaapi.services.PensamentoService;
+import io.github.raphaelrighetti.memotecaapi.services.PensamentoUsuarioService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
@@ -29,12 +31,16 @@ import jakarta.validation.Valid;
 public class PensamentoController {
 	
 	@Autowired
-	private PensamentoService service;
+	private PensamentoService pensamentoService;
+	
+	@Autowired
+	private PensamentoUsuarioService pensamentoUsuarioService;
 	
 	@PostMapping
 	@Transactional
-	public ResponseEntity<PensamentoDTO> cadastrar(@RequestBody @Valid PensamentoCadastroDTO dados, UriComponentsBuilder uriBuilder) {
-		PensamentoDTO dto = service.cadastrar(dados);
+	public ResponseEntity<PensamentoDTO> cadastrar(
+			@RequestHeader(name = "Authorization") String header, @RequestBody @Valid PensamentoCadastroDTO dados, UriComponentsBuilder uriBuilder) {
+		PensamentoDTO dto = pensamentoService.cadastrar(header, dados);
 		
 		URI uri = uriBuilder.path("/pensamentos/{id}").buildAndExpand(dto.id()).toUri();
 		
@@ -42,8 +48,8 @@ public class PensamentoController {
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<PensamentoDTO> detalhar(@PathVariable Long id) {
-		PensamentoDTO dto = service.detalhar(id);
+	public ResponseEntity<PensamentoDTO> detalhar(@RequestHeader(name = "Authorization") String header, @PathVariable Long id) {
+		PensamentoDTO dto = pensamentoService.detalhar(header, id);
 		
 		return ResponseEntity.ok(dto);
 	}
@@ -53,9 +59,23 @@ public class PensamentoController {
 		Page<PensamentoDTO> page;
 		
 		if (filtro != null) {
-			page = service.listarPorFiltro(filtro, pageable);
+			page = pensamentoService.listarPorFiltro(filtro, pageable);
 		} else {
-			page = service.listar(pageable);
+			page = pensamentoService.listar(pageable);
+		}
+		
+		return ResponseEntity.ok(page);
+	}
+	
+	@GetMapping("/usuario/{usuarioId}")
+	public ResponseEntity<Page<PensamentoDTO>> listarDoUsuario(
+			@RequestHeader(name = "Authorization") String header, @PathVariable Long usuarioId, @RequestParam(required = false) String filtro, Pageable pageable) {
+		Page<PensamentoDTO> page;
+		
+		if (filtro != null) {
+			page = pensamentoUsuarioService.listarPorFiltro(header, usuarioId, filtro, pageable);
+		} else {
+			page = pensamentoUsuarioService.listar(header, usuarioId, pageable);
 		}
 		
 		return ResponseEntity.ok(page);
@@ -66,9 +86,23 @@ public class PensamentoController {
 		Page<PensamentoDTO> page;
 		
 		if (filtro != null) {
-			page = service.listarFavoritosPorFiltro(filtro, pageable);
+			page = pensamentoService.listarFavoritosPorFiltro(filtro, pageable);
 		} else {
-			page = service.listarFavoritos(pageable);
+			page = pensamentoService.listarFavoritos(pageable);
+		}
+		
+		return ResponseEntity.ok(page);
+	}
+	
+	@GetMapping("/favoritos/usuario/{usuarioId}")
+	public ResponseEntity<Page<PensamentoDTO>> listarFavoritosDoUsuario(
+			@RequestHeader(name = "Authorization") String header, @PathVariable Long usuarioId, @RequestParam(required = false) String filtro, Pageable pageable) {
+		Page<PensamentoDTO> page;
+		
+		if (filtro != null) {
+			page = pensamentoUsuarioService.listarFavoritosPorFiltro(header, usuarioId, filtro, pageable);
+		} else {
+			page = pensamentoUsuarioService.listarFavoritos(header, usuarioId, pageable);
 		}
 		
 		return ResponseEntity.ok(page);
@@ -76,16 +110,16 @@ public class PensamentoController {
 	
 	@PutMapping("/{id}")
 	@Transactional
-	public ResponseEntity<PensamentoDTO> atualizar(@PathVariable Long id, @RequestBody @Valid PensamentoAtualizacaoDTO dados) {
-		PensamentoDTO dto = service.atualizar(id, dados);
+	public ResponseEntity<PensamentoDTO> atualizar(@RequestHeader(name = "Authorization") String header, @PathVariable Long id, @RequestBody @Valid PensamentoAtualizacaoDTO dados) {
+		PensamentoDTO dto = pensamentoService.atualizar(header, id, dados);
 		
 		return ResponseEntity.ok(dto);
 	}
 	
 	@DeleteMapping("/{id}")
 	@Transactional
-	public ResponseEntity<Void> excluir(@PathVariable Long id) {
-		service.excluir(id);
+	public ResponseEntity<Void> excluir(@RequestHeader(name = "Authorization") String header, @PathVariable Long id) {
+		pensamentoService.excluir(header, id);
 		
 		return ResponseEntity.noContent().build();
 	}

@@ -39,15 +39,10 @@ public class UsuarioService implements UserDetailsService {
 		return new UsuarioDTO(usuario);
 	}
 	
-	public UsuarioDTO detalhar(Long id, String token) {
-		String username = jwtService.getSubject(token);
+	public UsuarioDTO detalhar(String header, Long id) {
+		compararUsuarios(header, id);
 		
-		Usuario usuarioDoToken = repository.findByUsername(username);
 		Usuario usuario = repository.getReferenceById(id);
-		
-		if (usuarioDoToken != usuario) {
-			throw new AcessoProibidoException();
-		}
 		
 		return new UsuarioDTO(usuario);
 	}
@@ -58,7 +53,9 @@ public class UsuarioService implements UserDetailsService {
 		return page;
 	}
 	
-	public UsuarioDTO atualizar(Long id, UsuarioTransactionalDTO dados) {
+	public UsuarioDTO atualizar(String header, Long id, UsuarioTransactionalDTO dados) {
+		compararUsuarios(header, id);
+		
 		Usuario usuario = repository.getReferenceById(id);
 		
 		String senha = passwordEncoder.encode(dados.senha());
@@ -69,17 +66,34 @@ public class UsuarioService implements UserDetailsService {
 		return new UsuarioDTO(usuario);
 	}
 	
-	public void excluir(Long id) {
+	public void excluir(String header, Long id) {
 		if (!repository.existsById(id)) {
 			throw new EntityNotFoundException();
 		}
 		
+		compararUsuarios(header, id);
+		
 		repository.deleteById(id);
+	}
+	
+	public void compararUsuarios(String header, Long id) {
+		if (!repository.existsById(id)) {
+			throw new EntityNotFoundException();
+		}
+		
+		String token = header.replace("Bearer ", "");
+		String username = jwtService.getSubject(token);
+		
+		Usuario usuarioDoToken = repository.findByUsername(username);
+		Usuario usuario = repository.getReferenceById(id);
+		
+		if (usuarioDoToken != usuario) {
+			throw new AcessoProibidoException();
+		}
 	}
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		return repository.findByUsername(username);
 	}
-
 }

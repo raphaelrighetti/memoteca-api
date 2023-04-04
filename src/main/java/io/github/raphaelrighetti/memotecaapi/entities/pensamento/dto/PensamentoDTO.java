@@ -8,9 +8,17 @@ public record PensamentoDTO(
 		String conteudo,
 		String autoria,
 		Modelo modelo,
-		Boolean favorito
+		Boolean favorito,
+		Long usuarioId
 ) {
 	public PensamentoDTO(Pensamento pensamento) {
-		this(pensamento.getId(), pensamento.getConteudo(), pensamento.getAutoria(), pensamento.getModelo(), pensamento.getFavorito());
+		this(
+				pensamento.getId(),
+				pensamento.getConteudo(), 
+				pensamento.getAutoria(), 
+				pensamento.getModelo(), 
+				pensamento.getFavorito(), 
+				pensamento.getUsuario().getId()	
+		);
 	}
 }

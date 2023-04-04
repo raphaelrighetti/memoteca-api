@@ -10,7 +10,9 @@ public record PensamentoCadastroDTO(
 		@NotBlank
 		String autoria,
 		@NotNull
-		Modelo modelo
+		Modelo modelo,
+		@NotNull
+		Long usuarioId
 ) {
 
 }

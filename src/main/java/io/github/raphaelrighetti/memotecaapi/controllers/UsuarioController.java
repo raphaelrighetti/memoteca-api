@@ -27,10 +27,10 @@ public class UsuarioController {
 	private UsuarioService service;
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<UsuarioDTO> detalhar(@PathVariable Long id, @RequestHeader(name = "Authorization") String header) {
+	public ResponseEntity<UsuarioDTO> detalhar(@RequestHeader(name = "Authorization") String header, @PathVariable Long id) {
 		header = header.replace("Bearer ", "");
 		
-		UsuarioDTO dto = service.detalhar(id, header);
+		UsuarioDTO dto = service.detalhar(header, id);
 		
 		return ResponseEntity.ok(dto);
 	}
@@ -44,16 +44,16 @@ public class UsuarioController {
 	
 	@PutMapping("/{id}")
 	@Transactional
-	public ResponseEntity<UsuarioDTO> atualizar(@PathVariable Long id, @RequestBody @Valid UsuarioTransactionalDTO dados) {
-		UsuarioDTO dto = service.atualizar(id, dados);
+	public ResponseEntity<UsuarioDTO> atualizar(@RequestHeader(name = "Authorization") String header, @PathVariable Long id, @RequestBody @Valid UsuarioTransactionalDTO dados) {
+		UsuarioDTO dto = service.atualizar(header, id, dados);
 		
 		return ResponseEntity.ok(dto);
 	}
 	
 	@DeleteMapping("/{id}")
 	@Transactional
-	public ResponseEntity<Void> excluir(@PathVariable Long id) {
-		service.excluir(id);
+	public ResponseEntity<Void> excluir(@RequestHeader(name = "Authorization") String header, @PathVariable Long id) {
+		service.excluir(header, id);
 		
 		return ResponseEntity.noContent().build();
 	}

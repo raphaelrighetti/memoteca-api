@@ -9,66 +9,80 @@ import io.github.raphaelrighetti.memotecaapi.entities.pensamento.Pensamento;
 import io.github.raphaelrighetti.memotecaapi.entities.pensamento.dto.PensamentoAtualizacaoDTO;
 import io.github.raphaelrighetti.memotecaapi.entities.pensamento.dto.PensamentoCadastroDTO;
 import io.github.raphaelrighetti.memotecaapi.entities.pensamento.dto.PensamentoDTO;
+import io.github.raphaelrighetti.memotecaapi.entities.usuario.Usuario;
 import io.github.raphaelrighetti.memotecaapi.repositories.PensamentoRepository;
-import jakarta.persistence.EntityNotFoundException;
+import io.github.raphaelrighetti.memotecaapi.repositories.UsuarioRepository;
 
 @Service
 public class PensamentoService {
 
 	@Autowired
-	private PensamentoRepository repository;
+	private PensamentoRepository pensamentoRepository;
 	
-	public PensamentoDTO cadastrar(PensamentoCadastroDTO dados) {
-		Pensamento pensamento = new Pensamento(null, dados.conteudo(), dados.autoria(), dados.modelo(), false);
+	@Autowired
+	private UsuarioRepository usuarioRepository;
+	
+	@Autowired
+	private UsuarioService usuarioService;
+	
+	public PensamentoDTO cadastrar(String header, PensamentoCadastroDTO dados) {
+		usuarioService.compararUsuarios(header, dados.usuarioId());
 		
-		repository.save(pensamento);
+		Usuario usuario = usuarioRepository.getReferenceById(dados.usuarioId());
+		Pensamento pensamento = new Pensamento(null, dados.conteudo(), dados.autoria(), dados.modelo(), false, usuario);
+		
+		pensamentoRepository.save(pensamento);
 		
 		return new PensamentoDTO(pensamento);
 	}
 	
-	public PensamentoDTO detalhar(Long id) {
-		Pensamento pensamento = repository.getReferenceById(id);
+	public PensamentoDTO detalhar(String header, Long id) {
+		Pensamento pensamento = pensamentoRepository.getReferenceById(id);
+		
+		usuarioService.compararUsuarios(header, pensamento.getUsuario().getId());
 		
 		return new PensamentoDTO(pensamento);
 	}
 	
 	public Page<PensamentoDTO> listar(Pageable pageable) {
-		Page<PensamentoDTO> page = repository.findAll(pageable).map(PensamentoDTO::new);
+		Page<PensamentoDTO> page = pensamentoRepository.findAll(pageable).map(PensamentoDTO::new);
 		
 		return page;
 	}
 	
 	public Page<PensamentoDTO> listarPorFiltro(String filtro, Pageable pageable) {
-		Page<PensamentoDTO> page = repository.pensamentosPorFiltro(filtro, pageable).map(PensamentoDTO::new);
+		Page<PensamentoDTO> page = pensamentoRepository.pensamentosPorFiltro(filtro, pageable).map(PensamentoDTO::new);
 		
 		return page;
 	}
 	
 	public Page<PensamentoDTO> listarFavoritos(Pageable pageable) {
-		Page<PensamentoDTO> page = repository.findByFavoritoTrue(pageable).map(PensamentoDTO::new);
+		Page<PensamentoDTO> page = pensamentoRepository.findByFavoritoTrue(pageable).map(PensamentoDTO::new);
 		
 		return page;
 	}
 	
 	public Page<PensamentoDTO> listarFavoritosPorFiltro(String filtro, Pageable pageable) {
-		Page<PensamentoDTO> page = repository.pensamentosFavoritosPorFiltro(filtro, pageable).map(PensamentoDTO::new);
+		Page<PensamentoDTO> page = pensamentoRepository.pensamentosFavoritosPorFiltro(filtro, pageable).map(PensamentoDTO::new);
 		
 		return page;
 	}
 	
-	public PensamentoDTO atualizar(Long id, PensamentoAtualizacaoDTO dados) {
-		Pensamento pensamento = repository.getReferenceById(id);
+	public PensamentoDTO atualizar(String header, Long id, PensamentoAtualizacaoDTO dados) {
+		Pensamento pensamento = pensamentoRepository.getReferenceById(id);
+		
+		usuarioService.compararUsuarios(header, pensamento.getUsuario().getId());
 		
 		pensamento.atualizar(dados);
 		
 		return new PensamentoDTO(pensamento);
 	}
 	
-	public void excluir(Long id) {
-		if (!repository.existsById(id)) {
-			throw new EntityNotFoundException();
-		}
+	public void excluir(String header, Long id) {
+		Pensamento pensamento = pensamentoRepository.getReferenceById(id);
 		
-		repository.deleteById(id);
+		usuarioService.compararUsuarios(header, pensamento.getUsuario().getId());
+		
+		pensamentoRepository.delete(pensamento);
 	}
 }
