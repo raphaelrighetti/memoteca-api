@@ -10,18 +10,13 @@ import io.github.raphaelrighetti.memotecaapi.entities.pensamento.dto.PensamentoA
 import io.github.raphaelrighetti.memotecaapi.entities.pensamento.dto.PensamentoCadastroDTO;
 import io.github.raphaelrighetti.memotecaapi.entities.pensamento.dto.PensamentoDTO;
 import io.github.raphaelrighetti.memotecaapi.repositories.PensamentoRepository;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.PersistenceContext;
 
 @Service
 public class PensamentoService {
 
 	@Autowired
 	private PensamentoRepository repository;
-	
-	@PersistenceContext()
-	private EntityManager em;
 	
 	public PensamentoDTO cadastrar(PensamentoCadastroDTO dados) {
 		Pensamento pensamento = new Pensamento(null, dados.conteudo(), dados.autoria(), dados.modelo(), false);

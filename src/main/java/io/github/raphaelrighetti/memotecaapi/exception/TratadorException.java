@@ -1,5 +1,6 @@
 package io.github.raphaelrighetti.memotecaapi.exception;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,16 @@ public class TratadorException {
 		return ResponseEntity.badRequest().body(dtos);
 	}
 	
+	@ExceptionHandler(AcessoProibidoException.class)
+	public ResponseEntity<Void> acessoProibidoException() {
+		return ResponseEntity.status(403).build();
+	}
+	
+	@ExceptionHandler(SQLException.class)
+	public ResponseEntity<ErroGenericoDTO> sqlException(SQLException e) {
+		return ResponseEntity.badRequest().body(new ErroGenericoDTO(e.getMessage()));
+	}
+	
 	private record ErroValidacaoDTO(
 			String campo,
 			String mensagem
@@ -34,5 +45,11 @@ public class TratadorException {
 		public ErroValidacaoDTO(FieldError fieldError) {
 			this(fieldError.getField(), fieldError.getDefaultMessage());
 		}
+	}
+	
+	private record ErroGenericoDTO(
+			String mensagem
+	) {
+		
 	}
 }
