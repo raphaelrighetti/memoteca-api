@@ -12,7 +12,9 @@ public record PensamentoAtualizacaoDTO(
 		@NotNull
 		Modelo modelo,
 		@NotNull
-		Boolean favorito
+		Boolean favorito,
+		@NotNull
+		Boolean privado
 ) {
 
 }

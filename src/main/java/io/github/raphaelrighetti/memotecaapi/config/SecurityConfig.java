@@ -35,7 +35,7 @@ public class SecurityConfig {
 				.csrf().disable()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 				.authorizeHttpRequests()
-				.requestMatchers(HttpMethod.POST, "/login", "/registrar").permitAll()
+				.requestMatchers(HttpMethod.POST, "/login", "/login/**", "/registrar").permitAll()
 				.requestMatchers(HttpMethod.GET, "/pensamentos", "/pensamentos/favoritos").permitAll()
 				.requestMatchers("/usuarios", "/usuarios/**").hasRole("USUARIO")
 				.requestMatchers("/pensamentos", "/pensamentos/**").hasRole("USUARIO")

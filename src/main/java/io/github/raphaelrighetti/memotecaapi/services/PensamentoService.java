@@ -29,7 +29,7 @@ public class PensamentoService {
 		usuarioService.compararUsuarios(header, dados.usuarioId());
 		
 		Usuario usuario = usuarioRepository.getReferenceById(dados.usuarioId());
-		Pensamento pensamento = new Pensamento(null, dados.conteudo(), dados.autoria(), dados.modelo(), false, usuario);
+		Pensamento pensamento = new Pensamento(null, dados.conteudo(), dados.autoria(), dados.modelo(), false, dados.privado(), usuario);
 		
 		pensamentoRepository.save(pensamento);
 		
@@ -45,25 +45,13 @@ public class PensamentoService {
 	}
 	
 	public Page<PensamentoDTO> listar(Pageable pageable) {
-		Page<PensamentoDTO> page = pensamentoRepository.findAll(pageable).map(PensamentoDTO::new);
+		Page<PensamentoDTO> page = pensamentoRepository.pensamentos(pageable).map(PensamentoDTO::new);
 		
 		return page;
 	}
 	
 	public Page<PensamentoDTO> listarPorFiltro(String filtro, Pageable pageable) {
 		Page<PensamentoDTO> page = pensamentoRepository.pensamentosPorFiltro(filtro, pageable).map(PensamentoDTO::new);
-		
-		return page;
-	}
-	
-	public Page<PensamentoDTO> listarFavoritos(Pageable pageable) {
-		Page<PensamentoDTO> page = pensamentoRepository.findByFavoritoTrue(pageable).map(PensamentoDTO::new);
-		
-		return page;
-	}
-	
-	public Page<PensamentoDTO> listarFavoritosPorFiltro(String filtro, Pageable pageable) {
-		Page<PensamentoDTO> page = pensamentoRepository.pensamentosFavoritosPorFiltro(filtro, pageable).map(PensamentoDTO::new);
 		
 		return page;
 	}

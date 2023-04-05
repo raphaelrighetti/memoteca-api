@@ -9,6 +9,7 @@ public record PensamentoDTO(
 		String autoria,
 		Modelo modelo,
 		Boolean favorito,
+		Boolean privado,
 		Long usuarioId
 ) {
 	public PensamentoDTO(Pensamento pensamento) {
@@ -18,6 +19,7 @@ public record PensamentoDTO(
 				pensamento.getAutoria(), 
 				pensamento.getModelo(), 
 				pensamento.getFavorito(), 
+				pensamento.getPrivado(),
 				pensamento.getUsuario().getId()	
 		);
 	}

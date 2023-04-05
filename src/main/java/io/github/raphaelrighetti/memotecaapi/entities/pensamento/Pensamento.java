@@ -46,6 +46,9 @@ public class Pensamento {
 	private Boolean favorito;
 	
 	@NotNull
+	private Boolean privado;
+	
+	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "usuario_id")
 	private Usuario usuario;
@@ -55,5 +58,6 @@ public class Pensamento {
 		autoria = dados.autoria();
 		modelo = dados.modelo();
 		favorito = dados.favorito();
+		privado = dados.privado();
 	}
 }

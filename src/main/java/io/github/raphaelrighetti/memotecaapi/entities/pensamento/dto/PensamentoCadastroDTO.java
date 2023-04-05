@@ -12,6 +12,8 @@ public record PensamentoCadastroDTO(
 		@NotNull
 		Modelo modelo,
 		@NotNull
+		Boolean privado,
+		@NotNull
 		Long usuarioId
 ) {
 

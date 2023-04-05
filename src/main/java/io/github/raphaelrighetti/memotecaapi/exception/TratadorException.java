@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import io.github.raphaelrighetti.memotecaapi.exception.dto.ErroGenericoDTO;
 import jakarta.persistence.EntityNotFoundException;
 
 @RestControllerAdvice
@@ -50,11 +51,5 @@ public class TratadorException {
 		public ErroValidacaoDTO(FieldError fieldError) {
 			this(fieldError.getField(), fieldError.getDefaultMessage());
 		}
-	}
-	
-	private record ErroGenericoDTO(
-			String mensagem
-	) {
-		
 	}
 }

@@ -81,20 +81,7 @@ public class PensamentoController {
 		return ResponseEntity.ok(page);
 	}
 	
-	@GetMapping("/favoritos")
-	public ResponseEntity<Page<PensamentoDTO>> listarFavoritos(@RequestParam(required = false) String filtro, Pageable pageable) {
-		Page<PensamentoDTO> page;
-		
-		if (filtro != null) {
-			page = pensamentoService.listarFavoritosPorFiltro(filtro, pageable);
-		} else {
-			page = pensamentoService.listarFavoritos(pageable);
-		}
-		
-		return ResponseEntity.ok(page);
-	}
-	
-	@GetMapping("/favoritos/usuario/{usuarioId}")
+	@GetMapping("/usuario/{usuarioId}/favoritos")
 	public ResponseEntity<Page<PensamentoDTO>> listarFavoritosDoUsuario(
 			@RequestHeader(name = "Authorization") String header, @PathVariable Long usuarioId, @RequestParam(required = false) String filtro, Pageable pageable) {
 		Page<PensamentoDTO> page;
