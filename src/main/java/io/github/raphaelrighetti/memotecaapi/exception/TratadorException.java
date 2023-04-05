@@ -28,14 +28,19 @@ public class TratadorException {
 		return ResponseEntity.badRequest().body(dtos);
 	}
 	
+	@ExceptionHandler(SQLException.class)
+	public ResponseEntity<ErroGenericoDTO> sqlException(SQLException e) {
+		return ResponseEntity.badRequest().body(new ErroGenericoDTO(e.getMessage()));
+	}
+	
 	@ExceptionHandler(AcessoProibidoException.class)
 	public ResponseEntity<Void> acessoProibidoException() {
 		return ResponseEntity.status(403).build();
 	}
 	
-	@ExceptionHandler(SQLException.class)
-	public ResponseEntity<ErroGenericoDTO> sqlException(SQLException e) {
-		return ResponseEntity.badRequest().body(new ErroGenericoDTO(e.getMessage()));
+	@ExceptionHandler(RefreshTokenException.class)
+	public ResponseEntity<ErroGenericoDTO> refreshTokenException(RefreshTokenException e) {
+		return ResponseEntity.status(403).body(new ErroGenericoDTO(e.getMessage()));
 	}
 	
 	private record ErroValidacaoDTO(
