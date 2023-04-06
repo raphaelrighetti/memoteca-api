@@ -41,12 +41,13 @@ public class AutenticacaoController {
 				= new UsernamePasswordAuthenticationToken(dados.username(), dados.senha());
 		
 		Authentication authentication = manager.authenticate(authenticationToken);
-		UserDetails usuario = (UserDetails) authentication.getPrincipal();
+		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 		
-		String token = jwtService.gerarToken(usuario);
-		RefreshToken refreshToken = refreshTokenService.cadastrar(token, (Usuario) usuario);
+		String token = jwtService.gerarToken(userDetails);
+		Usuario usuario = (Usuario) userDetails;
+		RefreshToken refreshToken = refreshTokenService.cadastrar(token, usuario);
 		
-		JWTDTO dto = new JWTDTO(token, refreshToken.getUuid());
+		JWTDTO dto = new JWTDTO(usuario.getId(), token, refreshToken.getUuid());
 		
 		return ResponseEntity.ok(dto);
 	}

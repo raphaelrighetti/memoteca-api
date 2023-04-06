@@ -61,7 +61,7 @@ public class RefreshTokenService {
 		refreshToken.setToken(token);
 		refreshToken.setExpiracao(expiracao());
 		
-		return new JWTDTO(refreshToken.getToken(), refreshToken.getUuid());
+		return new JWTDTO(refreshToken.getUsuario().getId(), refreshToken.getToken(), refreshToken.getUuid());
 	}
 	
 	private boolean expirou(RefreshToken refreshToken) {
