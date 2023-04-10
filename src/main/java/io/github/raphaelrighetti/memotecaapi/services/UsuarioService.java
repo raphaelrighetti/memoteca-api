@@ -40,8 +40,6 @@ public class UsuarioService implements UserDetailsService {
 	}
 	
 	public UsuarioDTO detalhar(String header, Long id) {
-		compararUsuarios(header, id);
-		
 		Usuario usuario = repository.getReferenceById(id);
 		
 		return new UsuarioDTO(usuario);
