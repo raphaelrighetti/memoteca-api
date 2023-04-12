@@ -10,7 +10,8 @@ public record PensamentoDTO(
 		Modelo modelo,
 		Boolean favorito,
 		Boolean privado,
-		Long usuarioId
+		Long usuarioId,
+		String username
 ) {
 	public PensamentoDTO(Pensamento pensamento) {
 		this(
@@ -20,7 +21,8 @@ public record PensamentoDTO(
 				pensamento.getModelo(), 
 				pensamento.getFavorito(), 
 				pensamento.getPrivado(),
-				pensamento.getUsuario().getId()	
+				pensamento.getUsuario().getId(),
+				pensamento.getUsuario().getUsername()
 		);
 	}
 }

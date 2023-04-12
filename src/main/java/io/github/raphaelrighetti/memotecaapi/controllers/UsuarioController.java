@@ -27,10 +27,8 @@ public class UsuarioController {
 	private UsuarioService service;
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<UsuarioDTO> detalhar(@RequestHeader(name = "Authorization") String header, @PathVariable Long id) {
-		header = header.replace("Bearer ", "");
-		
-		UsuarioDTO dto = service.detalhar(header, id);
+	public ResponseEntity<UsuarioDTO> detalhar(@PathVariable Long id) {
+		UsuarioDTO dto = service.detalhar(id);
 		
 		return ResponseEntity.ok(dto);
 	}

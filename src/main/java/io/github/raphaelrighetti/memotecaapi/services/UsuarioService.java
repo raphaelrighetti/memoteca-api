@@ -39,7 +39,7 @@ public class UsuarioService implements UserDetailsService {
 		return new UsuarioDTO(usuario);
 	}
 	
-	public UsuarioDTO detalhar(String header, Long id) {
+	public UsuarioDTO detalhar(Long id) {
 		Usuario usuario = repository.getReferenceById(id);
 		
 		return new UsuarioDTO(usuario);

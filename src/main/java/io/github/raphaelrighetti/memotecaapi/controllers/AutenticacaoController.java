@@ -47,7 +47,7 @@ public class AutenticacaoController {
 		Usuario usuario = (Usuario) userDetails;
 		RefreshToken refreshToken = refreshTokenService.cadastrar(token, usuario);
 		
-		JWTDTO dto = new JWTDTO(usuario.getId(), token, refreshToken.getUuid());
+		JWTDTO dto = new JWTDTO(usuario.getId(), usuario.getUsername(), token, refreshToken.getUuid());
 		
 		return ResponseEntity.ok(dto);
 	}
